@@ -165,3 +165,4 @@ export function buildWhatsAppUrl(participant, scoreResult, locale = 'pt-BR') {
   const cleanPhone = participant.phone?.digits || '';
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
 }
+

@@ -1,13 +1,88 @@
 import { cultureBlocks, ratingScale, BLOCK_COUNT, QUESTIONS_PER_BLOCK, QUESTION_COUNT } from '/src/content/questions.js';
 import { normalizePhone } from '/src/domain/phone.js';
-import { pt } from '/src/content/pt.js';
-import { es } from '/src/content/es.js';
 
-const copy = { 'pt-BR': pt, 'es-PY': es };
+const copy = {
+  'pt-BR': {
+    eyebrow: 'MÉTODO LAP · GESTÃO E CULTURA',
+    introLine: 'Diagnóstico da sua',
+    introEm: 'cultura organizacional.',
+    introLead: 'Auditoria de 20 indicadores estratégicos para mensurar a coerência, liderança e maturidade cultural da empresa no dia a dia.',
+    statements: 'indicadores',
+    minutes: 'minutos',
+    languages: 'PT · ES',
+    nameLabel: 'Nome completo',
+    namePlaceholder: 'Como devemos chamar você?',
+    companyLabel: 'Empresa',
+    companyPlaceholder: 'Nome da sua empresa',
+    countryLabel: 'País',
+    phoneLabel: 'WhatsApp',
+    phonePlaceholder: '(00) 00000-0000',
+    consent: 'Autorizo o tratamento destes dados para gerar e armazenar meu diagnóstico cultural. Entendo que esta avaliação mensura práticas organizacionais e maturidade de gestão.',
+    start: 'Começar avaliação',
+    privacy: 'Seus dados são protegidos e utilizados exclusivamente para este diagnóstico corporativo.',
+    answerPrompt: 'AVALIE DE 1 A 5',
+    scaleHelp: '1 = Discordo Total · 2 = Discordo · 3 = Parcial · 4 = Concordo · 5 = Concordo Total',
+    blockLabel: 'Bloco',
+    of: 'de',
+    back: 'Anterior',
+    next: 'Seguinte',
+    finish: 'Ver Diagnóstico',
+    blockError: 'Responda a todos os 5 indicadores deste bloco para continuar.',
+    resultTitle: 'Índice de Aderência Cultural',
+    resultSubtitle: 'Auditoria de coerência e maturidade cultural',
+    totalPoints: 'Pontos Totais',
+    indexScore: 'Índice Final',
+    dimensionsTitle: 'Desempenho por Dimensão Estratégica',
+    strengthsTitle: 'Pontos Fortes da Cultura',
+    gapsTitle: 'Áreas Críticas de Atenção',
+    sendWhatsapp: 'Salvar / Compartilhar no WhatsApp',
+    restart: 'Realizar Novo Diagnóstico',
+    footer: 'Método LAP · Engenharia Comportamental e Gestão de Alta Performance',
+    required: 'Preencha seu nome, WhatsApp e aceite o termo de autorização.'
+  },
+  'es-PY': {
+    eyebrow: 'MÉTODO LAP · GESTIÓN Y CULTURA',
+    introLine: 'Diagnóstico de tu',
+    introEm: 'cultura organizacional.',
+    introLead: 'Auditoría de 20 indicadores estratégicos para medir la coherencia, el liderazgo y la madurez cultural de la empresa en la rutina diaria.',
+    statements: 'indicadores',
+    minutes: 'minutos',
+    languages: 'PT · ES',
+    nameLabel: 'Nombre completo',
+    namePlaceholder: '¿Cómo debemos llamarte?',
+    companyLabel: 'Empresa',
+    companyPlaceholder: 'Nombre de tu empresa',
+    countryLabel: 'País',
+    phoneLabel: 'WhatsApp',
+    phonePlaceholder: '0981 000 000',
+    consent: 'Autorizo el tratamiento de estos datos para generar y almacenar mi informe de cultura. Entiendo que esta evaluación describe prácticas de gestión y madurez cultural.',
+    start: 'Comenzar evaluación',
+    privacy: 'Tus datos están protegidos y se utilizan exclusivamente para este diagnóstico corporativo.',
+    answerPrompt: 'EVALÚA DE 1 A 5',
+    scaleHelp: '1 = Desacuerdo Total · 2 = En Desacuerdo · 3 = Parcialmente · 4 = De Acuerdo · 5 = Acuerdo Total',
+    blockLabel: 'Bloque',
+    of: 'de',
+    back: 'Anterior',
+    next: 'Siguiente',
+    finish: 'Ver Diagnóstico',
+    blockError: 'Responde a los 5 indicadores de este bloque para continuar.',
+    resultTitle: 'Índice de Adherencia Cultural',
+    resultSubtitle: 'Auditoría de coherencia y madurez cultural',
+    totalPoints: 'Puntos Totales',
+    indexScore: 'Índice Final',
+    dimensionsTitle: 'Rendimiento por Dimensión Estratégica',
+    strengthsTitle: 'Fortalezas de la Cultura',
+    gapsTitle: 'Áreas Críticas de Atención',
+    sendWhatsapp: 'Guardar / Compartir en WhatsApp',
+    restart: 'Realizar Nuevo Diagnóstico',
+    footer: 'Método LAP · Ingeniería Conductual y Gestión de Alta Performance',
+    required: 'Completa tu nombre, WhatsApp y acepta la autorización.'
+  }
+};
 
 const flags = {
   BR: '<svg viewBox="0 0 32 24" class="flag-svg"><rect width="32" height="24" rx="2" fill="#009739"/><polygon points="16,3.5 29,12 16,20.5 3,12" fill="#fed100"/><circle cx="16" cy="12" r="5" fill="#002776"/><path d="M11.5 13.2 C13.5 11.2 18.5 11.2 20.5 13.2" stroke="#ffffff" stroke-width="1.1" fill="none"/></svg>',
-  PY: '<svg viewBox="0 0 32 24" class="flag-svg"><rect width="32" height="8" rx="2" fill="#d52b1e"/><rect y="8" width="32" height="8" fill="#ffffff"/><rect y="16" width="32" height="8" rx="2" fill="#0038a8"/><circle cx="16" cy="12" r="3" fill="#ffffff" stroke="#0038a8" stroke-width="0.8"/><circle cx="16" cy="12" r="1.5" fill="#d52b1e"/></svg>'
+  PY: '<svg viewBox="0 0 32 24" class="flag-svg"><rect width="32" height="24" rx="2" fill="#ffffff"/><rect width="32" height="8" rx="2" fill="#d52b1e"/><rect y="16" width="32" height="8" rx="2" fill="#0038a8"/><circle cx="16" cy="12" r="2.8" fill="#ffffff" stroke="#d52b1e" stroke-width="0.8"/><circle cx="16" cy="12" r="1.2" fill="#fed100"/></svg>'
 };
 
 const state = {
@@ -67,7 +142,7 @@ function setLanguage(locale) {
     updateCountryUI(state.country);
   }
 
-  if ($('#quiz').classList.contains('active')) {
+  if ($('#quiz') && $('#quiz').classList.contains('active')) {
     renderQuizBlock();
   }
 }
@@ -100,54 +175,52 @@ function renderQuizBlock() {
   const listContainer = $('#culture-list');
   listContainer.innerHTML = '';
 
-  blockData.questions.forEach((q) => {
-    const qIndex = q.id - 1;
-    const currentAnswer = state.answers[qIndex];
+  blockData.questions.forEach((q, idxInBlock) => {
+    const absoluteIndex = state.currentBlock * QUESTIONS_PER_BLOCK + idxInBlock;
+    const currentRating = state.answers[absoluteIndex];
 
     const row = document.createElement('div');
-    row.className = `culture-question-row ${currentAnswer !== null ? 'answered' : ''}`;
-    row.dataset.questionId = q.id;
-
-    const numBadge = String(q.id).padStart(2, '0');
-
-    let optionsHtml = '';
-    scale.forEach((s) => {
-      const isChecked = currentAnswer === s.value ? 'checked' : '';
-      optionsHtml += `
-        <label class="rating-pill">
-          <input type="radio" name="q_${q.id}" value="${s.value}" ${isChecked}>
-          <span class="rating-num">${s.value}</span>
-          <span class="rating-tag">${s.label}</span>
-        </label>
-      `;
-    });
+    row.className = 'culture-question-row';
+    row.dataset.questionIndex = absoluteIndex;
 
     row.innerHTML = `
-      <div class="culture-q-header">
-        <span class="culture-q-badge">${numBadge}</span>
-        <p class="culture-q-text">${q.text}</p>
+      <div class="culture-question-text">
+        <span class="culture-question-num">${q.id}.</span>
+        <span>${q.text}</span>
       </div>
       <div class="rating-scale-options" role="radiogroup" aria-label="${q.text}">
-        ${optionsHtml}
+        ${scale.map((s) => `
+          <label class="rating-pill ${currentRating === s.value ? 'selected' : ''}">
+            <input type="radio" name="q-${q.id}" value="${s.value}" ${currentRating === s.value ? 'checked' : ''}>
+            <span class="rating-num">${s.value}</span>
+            <span class="rating-tag">${s.label}</span>
+          </label>
+        `).join('')}
       </div>
     `;
 
-    row.querySelectorAll('input').forEach((input) => {
-      input.addEventListener('change', () => {
-        state.answers[qIndex] = Number(input.value);
-        row.classList.add('answered');
+    row.querySelectorAll('input[type="radio"]').forEach((radio) => {
+      radio.addEventListener('change', (e) => {
+        const val = Number(e.target.value);
+        state.answers[absoluteIndex] = val;
+
+        row.querySelectorAll('.rating-pill').forEach((pill) => {
+          pill.classList.toggle('selected', Number(pill.querySelector('input').value) === val);
+        });
+
         $('#quiz-error').hidden = true;
-        updateQuizButtons();
+        updateNavState();
       });
     });
 
     listContainer.appendChild(row);
   });
 
-  updateQuizButtons();
+  $('#quiz-error').hidden = true;
+  updateNavState();
 }
 
-function updateQuizButtons() {
+function updateNavState() {
   const c = copy[state.locale];
   $('#back').disabled = state.currentBlock === 0;
 
@@ -170,31 +243,36 @@ function renderResult(result) {
   scoreCircle.style.borderColor = m.color;
   scoreCircle.style.backgroundColor = m.bgColor;
   $('#score-num').textContent = s.culturalIndex.toFixed(2);
-  $('#score-num').style.color = m.color;
+  $('#score-points').textContent = `${s.totalScore} / 100 pts`;
 
   const badge = $('#maturity-badge');
   badge.textContent = m.name;
   badge.style.backgroundColor = m.color;
   badge.style.color = '#ffffff';
 
-  $('#maturity-desc').textContent = m.summary;
+  $('#maturity-desc').textContent = m.description;
 
-  // Render Dimensions
-  const dimsContainer = $('#dimensions-container');
-  dimsContainer.innerHTML = '';
+  // Dimensions
+  const dimsGrid = $('#dimensions-grid');
+  dimsGrid.innerHTML = '';
   s.dimensions.forEach((dim) => {
-    const row = document.createElement('div');
-    row.className = 'dimension-row';
-    row.innerHTML = `
+    const card = document.createElement('div');
+    card.className = 'dimension-card';
+    card.innerHTML = `
       <div class="dim-header">
-        <span>${dim.title} <small class="dim-desc">— ${dim.description}</small></span>
-        <span>${dim.score.toFixed(2)}/5.00 (<b>${dim.percentage}%</b>)</span>
+        <span class="dim-title">${dim.title}</span>
+        <span class="dim-score">${dim.score.toFixed(1)} / 5.0</span>
       </div>
+      <p class="dim-desc">${dim.description}</p>
       <div class="dim-bar">
-        <div class="dim-fill" style="width: ${dim.percentage}%"></div>
+        <span class="dim-bar-fill" style="width: ${dim.percentage}%;"></span>
+      </div>
+      <div class="dim-footer">
+        <span>${dim.percentage}% aderência</span>
+        <span>${dim.total} / 25 pts</span>
       </div>
     `;
-    dimsContainer.appendChild(row);
+    dimsGrid.appendChild(card);
   });
 
   // Strengths and Gaps
@@ -269,67 +347,71 @@ async function submitCurrentAssessment() {
   }
 }
 
-// SETUP EVENT LISTENERS
-document.addEventListener('DOMContentLoaded', () => {
-  // Country select
-  const countrySelect = $('#country');
-  if (countrySelect) {
-    countrySelect.addEventListener('change', (e) => {
-      state.countryManuallySelected = true;
-      updateCountryUI(e.target.value);
-    });
-    updateCountryUI(countrySelect.value || 'BR');
-  }
-
-  // Language buttons
-  document.querySelectorAll('[data-lang]').forEach((btn) => {
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+// BIND ALL LISTENERS IMMEDIATELY
+// Country select
+const countrySelect = $('#country');
+if (countrySelect) {
+  countrySelect.addEventListener('change', (e) => {
+    state.countryManuallySelected = true;
+    updateCountryUI(e.target.value);
   });
+}
 
-  // Participant form
-  const form = $('#participant-form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = $('#name').value.trim();
-      const company = $('#company').value.trim();
-      const country = $('#country').value;
-      const phoneRaw = $('#phone').value.trim();
-      const consent = $('#consent').checked;
-      const errorEl = $('#form-error');
+// Language buttons
+document.querySelectorAll('[data-lang]').forEach((btn) => {
+  btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
 
-      if (!name || !phoneRaw || !consent) {
-        errorEl.textContent = copy[state.locale].required;
-        errorEl.hidden = false;
-        return;
-      }
+// Participant form
+const form = $('#participant-form');
+if (form) {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = ($('#name').value || '').trim();
+    const company = ($('#company').value || '').trim();
+    const country = $('#country').value || state.country;
+    const phoneRaw = ($('#phone').value || '').trim();
+    const consent = $('#consent').checked;
+    const errorEl = $('#form-error');
 
-      try {
-        normalizePhone(phoneRaw, country);
-      } catch (err) {
-        errorEl.textContent = err.message;
-        errorEl.hidden = false;
-        return;
-      }
+    if (name.length < 2 || !phoneRaw || !consent) {
+      errorEl.textContent = copy[state.locale].required;
+      errorEl.hidden = false;
+      return;
+    }
 
-      errorEl.hidden = true;
-      state.participant = { name, company, country, phone: phoneRaw, consent };
-      state.currentBlock = 0;
-      show('quiz');
-      renderQuizBlock();
-    });
-  }
+    try {
+      normalizePhone(phoneRaw, country);
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.hidden = false;
+      return;
+    }
 
-  // Quiz navigation
-  $('#back').addEventListener('click', () => {
+    errorEl.hidden = true;
+    state.participant = { name, company: company || '—', country, phone: phoneRaw, consent: true };
+    state.answers = Array(QUESTION_COUNT).fill(null);
+    state.currentBlock = 0;
+    show('quiz');
+    renderQuizBlock();
+  });
+}
+
+// Quiz navigation
+const backBtn = $('#back');
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
     if (state.currentBlock > 0) {
       state.currentBlock--;
       renderQuizBlock();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
+}
 
-  $('#next').addEventListener('click', () => {
+const nextBtn = $('#next');
+if (nextBtn) {
+  nextBtn.addEventListener('click', () => {
     if (!isCurrentBlockComplete()) {
       $('#quiz-error').textContent = copy[state.locale].blockError;
       $('#quiz-error').hidden = false;
@@ -344,14 +426,21 @@ document.addEventListener('DOMContentLoaded', () => {
       submitCurrentAssessment();
     }
   });
+}
 
-  // Restart
-  $('#restart').addEventListener('click', () => {
+// Restart button
+const restartBtn = $('#restart');
+if (restartBtn) {
+  restartBtn.addEventListener('click', () => {
     state.answers = Array(QUESTION_COUNT).fill(null);
     state.currentBlock = 0;
     state.participant = null;
-    $('#participant-form').reset();
-    updateCountryUI(state.country);
+    const f = $('#participant-form');
+    if (f) f.reset();
+    setLanguage(state.locale);
     show('intro');
   });
-});
+}
+
+// Initialize default state
+setLanguage('pt-BR');

@@ -12,3 +12,4 @@ describe('readConfig', () => {
     expect(config.retentionDays).toBe(730);
   });
 });
+

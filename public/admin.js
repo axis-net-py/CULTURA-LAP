@@ -205,3 +205,4 @@ $('#close-detail').addEventListener('click', () => $('#detail').close());
 
 // Initial session check
 api('/api/admin/session').then(showDashboard).catch(showLogin);
+

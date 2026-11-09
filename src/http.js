@@ -26,3 +26,4 @@ export function handleApiError(response, error) {
   console.error('Unhandled API error:', error instanceof Error ? error.message : error);
   return sendJson(response, 500, { error: 'INTERNAL_ERROR', message: 'Não foi possível concluir a solicitação.' });
 }
+

@@ -34,3 +34,4 @@ export default async function handler(req, res) {
   res.setHeader('Allow', 'GET, POST, DELETE');
   return sendJson(res, 405, { error: 'METHOD_NOT_ALLOWED', message: 'Método não permitido.' });
 }
+

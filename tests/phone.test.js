@@ -32,3 +32,4 @@ describe('normalizePhone', () => {
     expect(() => normalizePhone('', 'BR')).toThrow(PhoneValidationError);
   });
 });
+

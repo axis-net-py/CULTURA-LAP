@@ -70,3 +70,4 @@ export function normalizePhone(input, country) {
   const digits = `${countryCode}${national}`;
   return { e164: `+${digits}`, digits, national, country };
 }
+

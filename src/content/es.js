@@ -14,7 +14,7 @@ export const es = {
   phoneLabel: 'WhatsApp',
   phonePlaceholder: '0981 000 000',
   consent: 'Autorizo el tratamiento de estos datos para generar y almacenar mi informe de cultura. Entiendo que esta evaluación describe prácticas de gestión y madurez cultural.',
-  start: 'Comenzar Diagnóstico',
+  start: 'Comenzar evaluación',
   privacy: 'Tus datos están protegidos y se utilizan exclusivamente para este diagnóstico corporativo.',
   answerPrompt: 'EVALÚA DE 1 A 5',
   scaleHelp: '1 = Desacuerdo Total · 2 = En Desacuerdo · 3 = Parcialmente · 4 = De Acuerdo · 5 = Acuerdo Total',
@@ -36,3 +36,4 @@ export const es = {
   footer: 'Método LAP · Ingeniería Conductual y Gestión de Alta Performance',
   required: 'Completa tu nombre, WhatsApp y acepta la autorización.'
 };
+
