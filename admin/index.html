@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestão Diagnóstico Cultural — Método LAP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/styles.css">
+  <link rel="stylesheet" href="/public/admin.css">
+</head>
+<body class="admin-body">
+  <header class="admin-top">
+    <a class="brand" href="/" aria-label="Método LAP">
+      <img src="/public/logo-lap.png" alt="Método LAP" class="brand-logo">
+    </a>
+    <button id="logout" class="secondary" hidden>Sair</button>
+  </header>
+
+  <main class="admin-main">
+    <section id="login-panel" class="panel login-panel">
+      <p class="eyebrow">ACESSO RESTRITO</p>
+      <h1>Gestão Cultural</h1>
+      <form id="login-form">
+        <div class="field">
+          <label for="password">Senha administrativa</label>
+          <input id="password" type="password" autocomplete="current-password" required placeholder="Digite sua senha de acesso">
+        </div>
+        <p id="login-error" class="error" role="alert" hidden></p>
+        <button class="primary" type="submit">Entrar <b>→</b></button>
+      </form>
+    </section>
+
+    <section id="dashboard" hidden>
+      <div class="admin-title-row">
+        <div>
+          <p class="eyebrow">PAINEL EMPRESARIAL</p>
+          <h1>Diagnósticos Culturais</h1>
+        </div>
+        <a id="export" class="secondary" href="/api/admin/export">Exportar CSV</a>
+      </div>
+
+      <form id="filters" class="filter-bar">
+        <input name="search" placeholder="Buscar por nome, empresa ou WhatsApp">
+        <select name="country">
+          <option value="">Todos os países</option>
+          <option value="BR">Brasil (+55)</option>
+          <option value="PY">Paraguay (+595)</option>
+        </select>
+        <input name="from" type="date" aria-label="Data inicial">
+        <input name="to" type="date" aria-label="Data final">
+        <button class="primary compact" type="submit">Filtrar</button>
+      </form>
+
+      <p id="summary" class="admin-summary"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Participante</th>
+              <th>Empresa</th>
+              <th>WhatsApp</th>
+              <th>País</th>
+              <th>Índice</th>
+              <th>Maturidade</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="results"></tbody>
+        </table>
+      </div>
+
+      <div id="pagination" class="pagination"></div>
+    </section>
+  </main>
+
+  <dialog id="detail">
+    <button id="close-detail" class="dialog-close" aria-label="Fechar">×</button>
+    <div id="detail-content"></div>
+  </dialog>
+
+  <script type="module" src="/public/admin.js"></script>
+</body>
+</html>

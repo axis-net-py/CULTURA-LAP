@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico de Cultura Organizacional — Método LAP</title>
+  <meta name="description" content="Auditoria de 20 indicadores estratégicos para mensurar a coerência, liderança e maturidade cultural da empresa no dia a dia.">
+  <meta name="theme-color" content="#08182f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Método LAP">
+      <img src="/public/logo-lap.png" alt="Método LAP" class="brand-logo">
+    </a>
+    <div class="language" aria-label="Idioma">
+      <button type="button" data-lang="pt-BR" class="active">Português</button>
+      <button type="button" data-lang="es-PY">Español</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- SCREEN 1: INTRO & INTAKE -->
+    <section id="intro" class="screen active" aria-labelledby="intro-title">
+      <p class="eyebrow-main" data-copy="eyebrow">MÉTODO LAP · GESTÃO E CULTURA</p>
+      <h1 id="intro-title">
+        <span data-copy="introLine">Diagnóstico da sua</span><br>
+        <em data-copy="introEm">cultura organizacional.</em>
+      </h1>
+      <p class="lead" data-copy="introLead">
+        Auditoria de 20 indicadores estratégicos para mensurar a coerência, liderança e maturidade cultural da empresa no dia a dia.
+      </p>
+
+      <div class="meta-row">
+        <span>20 <small data-copy="statements">indicadores</small></span>
+        <i></i>
+        <span>3–5 <small data-copy="minutes">minutos</small></span>
+        <i></i>
+        <span data-copy="languages">PT · ES</span>
+      </div>
+
+      <form id="participant-form" class="panel" novalidate>
+        <div class="field full">
+          <label for="name" data-copy="nameLabel">Nome completo</label>
+          <input id="name" name="name" autocomplete="name" maxlength="120" required placeholder="Como devemos chamar você?">
+        </div>
+
+        <div class="field full">
+          <label for="company" data-copy="companyLabel">Empresa</label>
+          <input id="company" name="company" autocomplete="organization" maxlength="120" placeholder="Nome da sua empresa">
+        </div>
+
+        <div class="field country-field">
+          <label for="country" data-copy="countryLabel">País</label>
+          <div class="country-select-wrap">
+            <span id="country-flag-icon" class="country-flag-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 24" class="flag-svg">
+                <rect width="32" height="24" rx="2" fill="#009739"/>
+                <polygon points="16,3.5 29,12 16,20.5 3,12" fill="#fed100"/>
+                <circle cx="16" cy="12" r="5" fill="#002776"/>
+                <path d="M11.5 13.2 C13.5 11.2 18.5 11.2 20.5 13.2" stroke="#ffffff" stroke-width="1.1" fill="none"/>
+              </svg>
+            </span>
+            <select id="country" name="country" aria-label="País">
+              <option value="BR">Brasil (+55)</option>
+              <option value="PY">Paraguay (+595)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field phone-field">
+          <label for="phone" data-copy="phoneLabel">WhatsApp</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" required placeholder="(00) 00000-0000">
+        </div>
+
+        <label class="consent">
+          <input id="consent" type="checkbox" required>
+          <span data-copy="consent">
+            Autorizo o tratamento destes dados para gerar e armazenar meu diagnóstico cultural. Entendo que esta avaliação mensura práticas organizacionais e maturidade de gestão.
+          </span>
+        </label>
+
+        <p id="form-error" class="error" role="alert" hidden></p>
+
+        <button class="primary" type="submit">
+          <span data-copy="start">Iniciar Diagnóstico</span>
+          <b>→</b>
+        </button>
+
+        <p class="privacy" data-copy="privacy">
+          Seus dados são protegidos e utilizados exclusivamente para este diagnóstico corporativo.
+        </p>
+      </form>
+    </section>
+
+    <!-- SCREEN 2: QUESTIONNAIRE (4 BLOCKS OF 5 QUESTIONS) -->
+    <section id="quiz" class="screen" aria-labelledby="question-title">
+      <div class="quiz-head">
+        <p id="progress-label">Bloco 1 de 4</p>
+        <p id="progress-percent">25%</p>
+      </div>
+      <div class="progress">
+        <span id="progress-bar" style="width: 25%"></span>
+      </div>
+
+      <article class="question-card">
+        <p class="eyebrow" data-copy="answerPrompt">AVALIE DE 1 A 5</p>
+        <h2 id="question-title">Bloco 1: Identidade & Liderança</h2>
+
+        <p id="scale-help" class="rank-help">
+          <span class="rank-line"><strong>1</strong> = Discordo Total · <strong>2</strong> = Discordo · <strong>3</strong> = Parcial</span>
+          <span class="rank-sep">·</span>
+          <span class="rank-line"><strong>4</strong> = Concordo · <strong>5</strong> = Concordo Total</span>
+          <span class="rank-break"><br></span>
+          <span class="rank-note">Selecione com sinceridade o quanto cada prática é vivida na empresa.</span>
+        </p>
+
+        <div id="culture-list" class="culture-questions-list"></div>
+
+        <p id="quiz-error" class="error" role="alert" hidden></p>
+      </article>
+
+      <div class="quiz-actions">
+        <button id="back" class="secondary" type="button">
+          ← <span data-copy="back">Anterior</span>
+        </button>
+        <button id="next" class="primary" type="button">
+          <span data-copy="next">Seguinte</span> →
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: RESULT -->
+    <section id="result" class="screen" aria-labelledby="result-title">
+      <div class="result-header">
+        <p class="eyebrow-main" data-copy="eyebrow">MÉTODO LAP · DIAGNÓSTICO CONCLUÍDO</p>
+        <h1 id="result-title" data-copy="resultTitle">Índice de Aderência Cultural</h1>
+        <p id="result-person" class="result-person"></p>
+      </div>
+
+      <!-- MATURITY CARD -->
+      <article class="maturity-card">
+        <div id="score-circle" class="score-badge-circle">
+          <span id="score-num" class="num">0.0</span>
+          <span class="label">de 5.00</span>
+        </div>
+        <div>
+          <span id="maturity-badge" class="maturity-badge-pill">CULTURA SÓLIDA</span>
+          <p id="maturity-desc" class="maturity-desc"></p>
+        </div>
+      </article>
+
+      <!-- DIMENSIONS BREAKDOWN -->
+      <article class="dimensions-card">
+        <h3 data-copy="dimensionsTitle">Desempenho por Dimensão Estratégica</h3>
+        <div id="dimensions-container"></div>
+      </article>
+
+      <!-- INSIGHTS -->
+      <div class="insights-grid">
+        <div class="insight-card strengths">
+          <h4 data-copy="strengthsTitle">Pontos Fortes da Cultura</h4>
+          <ul id="strengths-list" class="insight-list"></ul>
+        </div>
+        <div class="insight-card gaps">
+          <h4 data-copy="gapsTitle">Áreas Críticas de Atenção</h4>
+          <ul id="gaps-list" class="insight-list"></ul>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <a id="whatsapp-link" class="whatsapp" target="_blank" rel="noopener">
+        <span>WhatsApp</span>
+        <b data-copy="sendWhatsapp">Salvar / Compartilhar no WhatsApp</b>
+      </a>
+
+      <button id="restart" class="secondary full-button" type="button" data-copy="restart">
+        Realizar Novo Diagnóstico
+      </button>
+    </section>
+  </main>
+
+  <footer>
+    <span data-copy="footer">Método LAP · Engenharia Comportamental e Gestão de Alta Performance</span>
+  </footer>
+
+  <script type="module" src="/public/app.js"></script>
+</body>
+</html>
