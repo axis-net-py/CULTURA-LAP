@@ -81,6 +81,8 @@ export function createAssessmentService({ repository } = {}) {
             dimensions: existing.dimensions
           },
           maturity: existing.maturity,
+          topStrengths: scoreResult.topStrengths,
+          priorityGaps: scoreResult.priorityGaps,
           whatsappUrl: existing.whatsappUrl
         };
       }
@@ -95,6 +97,8 @@ export function createAssessmentService({ repository } = {}) {
           dimensions: saved.dimensions
         },
         maturity: saved.maturity,
+        topStrengths: scoreResult.topStrengths,
+        priorityGaps: scoreResult.priorityGaps,
         whatsappUrl: saved.whatsappUrl
       };
     }

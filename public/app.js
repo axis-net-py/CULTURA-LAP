@@ -21,13 +21,15 @@ const copy = {
     start: 'Começar avaliação',
     privacy: 'Seus dados são protegidos e utilizados exclusivamente para este diagnóstico corporativo.',
     answerPrompt: 'AVALIE DE 1 A 5',
-    scaleHelp: '1 = Discordo Total · 2 = Discordo · 3 = Parcial · 4 = Concordo · 5 = Concordo Total',
+    scaleHelp: '<span class="rank-line"><strong>1</strong> = Discordo Total · <strong>2</strong> = Discordo · <strong>3</strong> = Parcial</span> <span class="rank-sep">·</span> <span class="rank-line"><strong>4</strong> = Concordo · <strong>5</strong> = Concordo Total</span><span class="rank-break"><br></span><span class="rank-note">Selecione com sinceridade o quanto cada prática é vivida na empresa.</span>',
+    scaleMin: '1 · Discordo total',
+    scaleMax: 'Concordo total · 5',
     blockLabel: 'Bloco',
     of: 'de',
     back: 'Anterior',
     next: 'Seguinte',
     finish: 'Ver Diagnóstico',
-    blockError: 'Responda a todos os 5 indicadores deste bloco para continuar.',
+    blockError: 'Responda aos 5 indicadores deste bloco para continuar.',
     resultTitle: 'Índice de Aderência Cultural',
     resultSubtitle: 'Auditoria de coerência e maturidade cultural',
     totalPoints: 'Pontos Totais',
@@ -59,7 +61,9 @@ const copy = {
     start: 'Comenzar evaluación',
     privacy: 'Tus datos están protegidos y se utilizan exclusivamente para este diagnóstico corporativo.',
     answerPrompt: 'EVALÚA DE 1 A 5',
-    scaleHelp: '1 = Desacuerdo Total · 2 = En Desacuerdo · 3 = Parcialmente · 4 = De Acuerdo · 5 = Acuerdo Total',
+    scaleHelp: '<span class="rank-line"><strong>1</strong> = Desacuerdo Total · <strong>2</strong> = Desacuerdo · <strong>3</strong> = Parcial</span> <span class="rank-sep">·</span> <span class="rank-line"><strong>4</strong> = De Acuerdo · <strong>5</strong> = Totalmente de Acuerdo</span><span class="rank-break"><br></span><span class="rank-note">Selecciona con sinceridad cuánto se vive cada práctica en la empresa.</span>',
+    scaleMin: '1 · Desacuerdo total',
+    scaleMax: 'De acuerdo total · 5',
     blockLabel: 'Bloque',
     of: 'de',
     back: 'Anterior',
@@ -132,7 +136,11 @@ function setLanguage(locale) {
   document.querySelectorAll('[data-copy]').forEach((el) => {
     const key = el.dataset.copy;
     if (copy[locale] && copy[locale][key] !== undefined) {
-      el.textContent = copy[locale][key];
+      if (key === 'scaleHelp') {
+        el.innerHTML = copy[locale][key];
+      } else {
+        el.textContent = copy[locale][key];
+      }
     }
   });
 
@@ -140,6 +148,11 @@ function setLanguage(locale) {
   if (countrySelect) {
     countrySelect.value = state.country;
     updateCountryUI(state.country);
+  }
+
+  const helpEl = $('#scale-help');
+  if (helpEl && copy[locale]?.scaleHelp) {
+    helpEl.innerHTML = copy[locale].scaleHelp;
   }
 
   if ($('#quiz') && $('#quiz').classList.contains('active')) {
@@ -166,13 +179,23 @@ function renderQuizBlock() {
   const blockNumber = blockIndex + 1;
   const percent = Math.round((blockNumber / BLOCK_COUNT) * 100);
 
-  $('#progress-label').textContent = `${c.blockLabel} ${blockNumber} ${c.of} ${BLOCK_COUNT}`;
-  $('#progress-percent').textContent = `${percent}%`;
-  $('#progress-bar').style.width = `${percent}%`;
+  const progLabel = $('#progress-label');
+  if (progLabel) progLabel.textContent = `${c.blockLabel} ${blockNumber} ${c.of} ${BLOCK_COUNT}`;
 
-  $('#question-title').textContent = `${c.blockLabel} ${blockNumber}: ${blockData.title}`;
+  const progPercent = $('#progress-percent');
+  if (progPercent) progPercent.textContent = `${percent}%`;
+
+  const progBar = $('#progress-bar');
+  if (progBar) progBar.style.width = `${percent}%`;
+
+  const qTitle = $('#question-title');
+  if (qTitle) qTitle.textContent = `${c.blockLabel} ${blockNumber}: ${blockData.title}`;
+
+  const scaleHelp = $('#scale-help');
+  if (scaleHelp) scaleHelp.innerHTML = c.scaleHelp;
 
   const listContainer = $('#culture-list');
+  if (!listContainer) return;
   listContainer.innerHTML = '';
 
   blockData.questions.forEach((q, idxInBlock) => {
@@ -180,22 +203,27 @@ function renderQuizBlock() {
     const currentRating = state.answers[absoluteIndex];
 
     const row = document.createElement('div');
-    row.className = 'culture-question-row';
+    row.className = `culture-question-row ${currentRating !== null ? 'answered' : ''}`;
     row.dataset.questionIndex = absoluteIndex;
 
     row.innerHTML = `
-      <div class="culture-question-text">
-        <span class="culture-question-num">${q.id}.</span>
-        <span>${q.text}</span>
+      <div class="culture-q-header">
+        <span class="culture-q-badge">${q.id}</span>
+        <p class="culture-q-text">${q.text}</p>
       </div>
-      <div class="rating-scale-options" role="radiogroup" aria-label="${q.text}">
-        ${scale.map((s) => `
-          <label class="rating-pill ${currentRating === s.value ? 'selected' : ''}">
-            <input type="radio" name="q-${q.id}" value="${s.value}" ${currentRating === s.value ? 'checked' : ''}>
-            <span class="rating-num">${s.value}</span>
-            <span class="rating-tag">${s.label}</span>
-          </label>
-        `).join('')}
+      <div class="rating-choice-group">
+        <div class="rating-circles-row" role="radiogroup" aria-label="${q.text}">
+          ${scale.map((s) => `
+            <label class="rating-circle-choice ${currentRating === s.value ? 'selected' : ''}">
+              <input type="radio" name="q-${q.id}" value="${s.value}" ${currentRating === s.value ? 'checked' : ''}>
+              <span>${s.value}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="rating-scale-legend" aria-hidden="true">
+          <span class="legend-min">${c.scaleMin}</span>
+          <span class="legend-max">${c.scaleMax}</span>
+        </div>
       </div>
     `;
 
@@ -204,11 +232,13 @@ function renderQuizBlock() {
         const val = Number(e.target.value);
         state.answers[absoluteIndex] = val;
 
-        row.querySelectorAll('.rating-pill').forEach((pill) => {
+        row.querySelectorAll('.rating-circle-choice').forEach((pill) => {
           pill.classList.toggle('selected', Number(pill.querySelector('input').value) === val);
         });
+        row.classList.add('answered');
 
-        $('#quiz-error').hidden = true;
+        const errBox = $('#quiz-error');
+        if (errBox) errBox.hidden = true;
         updateNavState();
       });
     });
@@ -216,78 +246,107 @@ function renderQuizBlock() {
     listContainer.appendChild(row);
   });
 
-  $('#quiz-error').hidden = true;
+  const errBox = $('#quiz-error');
+  if (errBox) errBox.hidden = true;
   updateNavState();
 }
 
 function updateNavState() {
   const c = copy[state.locale];
-  $('#back').disabled = state.currentBlock === 0;
+  const backBtn = $('#back');
+  if (backBtn) backBtn.disabled = state.currentBlock === 0;
 
   const isLast = state.currentBlock === BLOCK_COUNT - 1;
   const nextBtn = $('#next');
-  nextBtn.querySelector('span').textContent = isLast ? c.finish : c.next;
-
-  const complete = isCurrentBlockComplete();
-  nextBtn.disabled = !complete;
+  if (nextBtn) {
+    const span = nextBtn.querySelector('span');
+    if (span) span.textContent = isLast ? c.finish : c.next;
+    nextBtn.disabled = !isCurrentBlockComplete();
+  }
 }
 
 function renderResult(result) {
-  const p = result.participant;
-  const m = result.maturity;
-  const s = result.scores;
+  const p = result.participant || state.participant || {};
+  const m = result.maturity || {};
+  const s = result.scores || {};
 
-  $('#result-person').textContent = `${p.name} · ${p.company} (${p.phone})`;
+  const personEl = $('#result-person');
+  if (personEl) {
+    const compText = p.company ? ` · ${p.company}` : '';
+    personEl.textContent = `${p.name || ''}${compText}`;
+  }
 
   const scoreCircle = $('#score-circle');
-  scoreCircle.style.borderColor = m.color;
-  scoreCircle.style.backgroundColor = m.bgColor;
-  $('#score-num').textContent = s.culturalIndex.toFixed(2);
-  $('#score-points').textContent = `${s.totalScore} / 100 pts`;
+  if (scoreCircle) {
+    if (m.color) scoreCircle.style.borderColor = m.color;
+    if (m.bgColor) scoreCircle.style.backgroundColor = m.bgColor;
+  }
+
+  const scoreNum = $('#score-num');
+  if (scoreNum && s.culturalIndex !== undefined) {
+    scoreNum.textContent = Number(s.culturalIndex).toFixed(2);
+  }
+
+  const scorePoints = $('#score-points');
+  if (scorePoints && s.totalScore !== undefined) {
+    scorePoints.textContent = `${s.totalScore} / 100 pts`;
+  }
 
   const badge = $('#maturity-badge');
-  badge.textContent = m.name;
-  badge.style.backgroundColor = m.color;
-  badge.style.color = '#ffffff';
+  if (badge) {
+    badge.textContent = m.name || '';
+    if (m.color) badge.style.backgroundColor = m.color;
+    badge.style.color = '#ffffff';
+  }
 
-  $('#maturity-desc').textContent = m.description;
+  const maturityDesc = $('#maturity-desc');
+  if (maturityDesc) {
+    maturityDesc.textContent = m.summary || m.description || '';
+  }
 
   // Dimensions
-  const dimsGrid = $('#dimensions-grid');
-  dimsGrid.innerHTML = '';
-  s.dimensions.forEach((dim) => {
-    const card = document.createElement('div');
-    card.className = 'dimension-card';
-    card.innerHTML = `
-      <div class="dim-header">
-        <span class="dim-title">${dim.title}</span>
-        <span class="dim-score">${dim.score.toFixed(1)} / 5.0</span>
-      </div>
-      <p class="dim-desc">${dim.description}</p>
-      <div class="dim-bar">
-        <span class="dim-bar-fill" style="width: ${dim.percentage}%;"></span>
-      </div>
-      <div class="dim-footer">
-        <span>${dim.percentage}% aderência</span>
-        <span>${dim.total} / 25 pts</span>
-      </div>
-    `;
-    dimsGrid.appendChild(card);
-  });
+  const dimsGrid = $('#dimensions-grid') || $('#dimensions-container');
+  if (dimsGrid && Array.isArray(s.dimensions)) {
+    dimsGrid.innerHTML = '';
+    s.dimensions.forEach((dim) => {
+      const card = document.createElement('div');
+      card.className = 'dimension-card';
+      card.innerHTML = `
+        <div class="dim-header">
+          <span class="dim-title">${dim.title}</span>
+          <span class="dim-score">${Number(dim.score).toFixed(1)} / 5.0</span>
+        </div>
+        <p class="dim-desc">${dim.description || ''}</p>
+        <div class="dim-bar">
+          <span class="dim-bar-fill" style="width: ${dim.percentage}%;"></span>
+        </div>
+        <div class="dim-footer">
+          <span>${dim.percentage}% aderência</span>
+          <span>${dim.total} / 25 pts</span>
+        </div>
+      `;
+      dimsGrid.appendChild(card);
+    });
+  }
 
   // Strengths and Gaps
-  const blocks = cultureBlocks[state.locale];
-  const allQuestions = blocks.flatMap((b) => b.questions);
-
+  const blocks = cultureBlocks[state.locale] || cultureBlocks['pt-BR'];
+  const allQuestions = (blocks || []).flatMap((b) => b.questions || []);
   const getQText = (id) => {
     const found = allQuestions.find((q) => q.id === id);
     return found ? found.text : `Indicador ${id}`;
   };
 
+  const topStrengths = result.topStrengths ||
+    state.answers.map((score, i) => ({ id: i + 1, score })).sort((a, b) => b.score - a.score || a.id - b.id).slice(0, 3);
+
+  const priorityGaps = result.priorityGaps ||
+    state.answers.map((score, i) => ({ id: i + 1, score })).sort((a, b) => a.score - b.score || a.id - b.id).slice(0, 3);
+
   const strengthsList = $('#strengths-list');
-  strengthsList.innerHTML = '';
-  if (result.topStrengths) {
-    result.topStrengths.forEach((item) => {
+  if (strengthsList) {
+    strengthsList.innerHTML = '';
+    topStrengths.forEach((item) => {
       const li = document.createElement('li');
       li.innerHTML = `<strong>${item.score}/5</strong> — ${getQText(item.id)}`;
       strengthsList.appendChild(li);
@@ -295,9 +354,9 @@ function renderResult(result) {
   }
 
   const gapsList = $('#gaps-list');
-  gapsList.innerHTML = '';
-  if (result.priorityGaps) {
-    result.priorityGaps.forEach((item) => {
+  if (gapsList) {
+    gapsList.innerHTML = '';
+    priorityGaps.forEach((item) => {
       const li = document.createElement('li');
       li.innerHTML = `<strong>${item.score}/5</strong> — ${getQText(item.id)}`;
       gapsList.appendChild(li);
@@ -305,7 +364,7 @@ function renderResult(result) {
   }
 
   const waLink = $('#whatsapp-link');
-  if (waLink) {
+  if (waLink && result.whatsappUrl) {
     waLink.href = result.whatsappUrl;
   }
 
@@ -316,7 +375,11 @@ async function submitCurrentAssessment() {
   if (state.isSubmitting) return;
   state.isSubmitting = true;
   const nextBtn = $('#next');
-  nextBtn.disabled = true;
+  if (nextBtn) {
+    nextBtn.disabled = true;
+    const span = nextBtn.querySelector('span');
+    if (span) span.textContent = 'Processando...';
+  }
 
   try {
     const payload = {
@@ -338,10 +401,18 @@ async function submitCurrentAssessment() {
 
     renderResult(data);
   } catch (err) {
+    console.error('Submission error:', err);
     const errBox = $('#quiz-error');
-    errBox.textContent = err.message || 'Erro ao enviar respostas.';
-    errBox.hidden = false;
-    nextBtn.disabled = false;
+    if (errBox) {
+      errBox.textContent = err.message || 'Erro ao enviar respostas.';
+      errBox.hidden = false;
+    }
+    if (nextBtn) {
+      nextBtn.disabled = false;
+      const span = nextBtn.querySelector('span');
+      const c = copy[state.locale] || copy['pt-BR'];
+      if (span) span.textContent = c.finish;
+    }
   } finally {
     state.isSubmitting = false;
   }
@@ -351,10 +422,12 @@ async function submitCurrentAssessment() {
 // Country select
 const countrySelect = $('#country');
 if (countrySelect) {
-  countrySelect.addEventListener('change', (e) => {
+  const onCountryChange = (e) => {
     state.countryManuallySelected = true;
     updateCountryUI(e.target.value);
-  });
+  };
+  countrySelect.addEventListener('change', onCountryChange);
+  countrySelect.addEventListener('input', onCountryChange);
 }
 
 // Language buttons
@@ -374,35 +447,39 @@ if (form) {
     const consent = $('#consent').checked;
     const errorEl = $('#form-error');
 
-    if (name.length < 2 || !phoneRaw || !consent) {
+    if (!name || name.length < 2 || !consent) {
       errorEl.textContent = copy[state.locale].required;
       errorEl.hidden = false;
       return;
     }
 
     try {
-      normalizePhone(phoneRaw, country);
+      const normalized = normalizePhone(phoneRaw, country);
+      state.participant = {
+        name,
+        company,
+        country,
+        phone: normalized.e164,
+        consent: true
+      };
+      errorEl.hidden = true;
+      state.currentBlock = 0;
+      state.answers = Array(QUESTION_COUNT).fill(null);
+      renderQuizBlock();
+      show('quiz');
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.hidden = false;
-      return;
     }
-
-    errorEl.hidden = true;
-    state.participant = { name, company: company || '—', country, phone: phoneRaw, consent: true };
-    state.answers = Array(QUESTION_COUNT).fill(null);
-    state.currentBlock = 0;
-    show('quiz');
-    renderQuizBlock();
   });
 }
 
-// Quiz navigation
+// Quiz actions
 const backBtn = $('#back');
 if (backBtn) {
   backBtn.addEventListener('click', () => {
     if (state.currentBlock > 0) {
-      state.currentBlock--;
+      state.currentBlock -= 1;
       renderQuizBlock();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -413,13 +490,16 @@ const nextBtn = $('#next');
 if (nextBtn) {
   nextBtn.addEventListener('click', () => {
     if (!isCurrentBlockComplete()) {
-      $('#quiz-error').textContent = copy[state.locale].blockError;
-      $('#quiz-error').hidden = false;
+      const err = $('#quiz-error');
+      if (err) {
+        err.textContent = copy[state.locale].blockError;
+        err.hidden = false;
+      }
       return;
     }
 
     if (state.currentBlock < BLOCK_COUNT - 1) {
-      state.currentBlock++;
+      state.currentBlock += 1;
       renderQuizBlock();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -432,15 +512,14 @@ if (nextBtn) {
 const restartBtn = $('#restart');
 if (restartBtn) {
   restartBtn.addEventListener('click', () => {
-    state.answers = Array(QUESTION_COUNT).fill(null);
     state.currentBlock = 0;
+    state.answers = Array(QUESTION_COUNT).fill(null);
     state.participant = null;
-    const f = $('#participant-form');
-    if (f) f.reset();
+    if (form) form.reset();
     setLanguage(state.locale);
     show('intro');
   });
 }
 
-// Initialize default state
+// Initial state boot
 setLanguage('pt-BR');
