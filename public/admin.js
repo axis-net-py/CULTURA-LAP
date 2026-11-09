@@ -207,8 +207,32 @@ function bindActions() {
       try {
         const item = await api(`/api/admin/assessments/${button.dataset.view}`);
         const dims = item.dimensions || [];
-        const strengths = item.maturity?.strengths || [];
-        const gaps = item.maturity?.gaps || [];
+        const answers = Array.isArray(item.answers) ? item.answers : [];
+        const ptQuestions = [
+          'Conheço claramente a missão, visão e os valores da nossa empresa.',
+          'Os valores declarados orientam as decisões reais da liderança.',
+          'A liderança age com coerência e dá o exemplo dos princípios.',
+          'Desvios culturais e atitudes inadequadas são corrigidos a tempo.',
+          'Colaboradores que personificam a cultura são valorizados.',
+          'Existe coerência real entre o que se fala e o que se pratica.',
+          'Posso manifestar opiniões e discordar com segurança e respeito.',
+          'As expectativas de conduta e entrega da equipe são claras.',
+          'O processo de contratação e onboarding apresenta a cultura.',
+          'Feedbacks periódicos consideram atitudes, valores e metas.',
+          'Reuniões de alinhamento reforçam princípios e prioridades.',
+          'Os critérios para decisões e mudanças são transparentes.',
+          'Existe colaboração genuína e sinergia entre os diferentes setores.',
+          'Conflitos interpessoais são tratados com maturidade rápida.',
+          'Os líderes assumem total responsabilidade pelos seus erros.',
+          'Metas e resultados financeiros não justificam violar valores.',
+          'Promoções e aumentos levam em conta a postura ética e cultural.',
+          'A comunicação interna é transparente, frequente e sem ruídos.',
+          'Sei com clareza quais comportamentos são inegociáveis na nossa empresa.',
+          'A cultura contribui para resultados sólidos e orgulho de pertencer.'
+        ];
+        const scoredQ = answers.map((val, idx) => ({ id: idx + 1, text: ptQuestions[idx] || `Indicador ${idx + 1}`, score: Number(val) || 0 }));
+        const indStrengths = [...scoredQ].sort((a, b) => b.score - a.score).slice(0, 3);
+        const indGaps = [...scoredQ].sort((a, b) => a.score - b.score).slice(0, 3);
 
         $('#detail-content').innerHTML = `
           <div class="detail-header">
@@ -222,31 +246,36 @@ function bindActions() {
             <div>
               <p style="margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700;">Índice de Aderência Cultural</p>
               <h3 style="margin: 2px 0 0; font-size: 18px; color: ${item.maturity?.color || 'var(--ink)'};">${escapeHtml(item.maturity?.name || '')}</h3>
-              <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted);">${escapeHtml(item.maturity?.description || '')}</p>
+              <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted);">${escapeHtml(item.maturity?.summary || item.maturity?.description || '')}</p>
             </div>
           </div>
 
           <h4 style="margin: 16px 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy);">Dimensões da Cultura LAP</h4>
           <div class="detail-dims">
-            ${dims.map((d) => `
-              <div class="dim-row">
-                <span><strong>${escapeHtml(d.name)}</strong></span>
-                <span>${d.average.toFixed(2)} / 5.0 (${d.score}/${d.maxScore})</span>
-                <div class="dim-bar-wrap">
-                  <div class="dim-bar-fill" style="width: ${(d.average / 5) * 100}%;"></div>
+            ${dims.map((d) => {
+              const scoreVal = Number(d.score || d.average || 0);
+              const pct = d.percentage || Math.round((scoreVal / 5) * 100);
+              const title = d.title || d.name || '';
+              return `
+                <div class="dim-row">
+                  <span><strong>${escapeHtml(title)}</strong></span>
+                  <span>${scoreVal.toFixed(1)} / 5.0 (${pct}%)</span>
+                  <div class="dim-bar-wrap">
+                    <div class="dim-bar-fill" style="width: ${pct}%;"></div>
+                  </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
 
-          ${strengths.length ? `
+          ${indStrengths.length ? `
             <h4 style="margin: 16px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: #047857;">Fortalezas Consolidadas</h4>
-            <ul class="detail-list">${strengths.map((s) => `<li>${escapeHtml(s.text)} (Nota: ${s.rating}/5)</li>`).join('')}</ul>
+            <ul class="detail-list">${indStrengths.map((s) => `<li><strong>Q${s.id}.</strong> ${escapeHtml(s.text)} (Nota: ${s.score}/5)</li>`).join('')}</ul>
           ` : ''}
 
-          ${gaps.length ? `
+          ${indGaps.length ? `
             <h4 style="margin: 16px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: #c2410c;">Gargalos Prioritários</h4>
-            <ul class="detail-list">${gaps.map((g) => `<li>${escapeHtml(g.text)} (Nota: ${g.rating}/5)</li>`).join('')}</ul>
+            <ul class="detail-list">${indGaps.map((g) => `<li><strong>Q${g.id}.</strong> ${escapeHtml(g.text)} (Nota: ${g.score}/5)</li>`).join('')}</ul>
           ` : ''}
 
           <div class="detail-actions">
