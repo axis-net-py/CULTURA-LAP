@@ -30,4 +30,14 @@ describe('AdminService', () => {
   it('rejects nonexistent assessment in getAssessment', async () => {
     await expect(service.getAssessment(9999)).rejects.toThrow(AdminError);
   });
+
+  it('computes company overview and lists companies', async () => {
+    const overview = await service.getOverview({ company: 'DALET' });
+    expect(overview).toBeDefined();
+    expect(overview.company).toBe('DALET');
+    expect(Array.isArray(overview.dimensions)).toBe(true);
+
+    const companies = await service.listCompanies();
+    expect(Array.isArray(companies)).toBe(true);
+  });
 });

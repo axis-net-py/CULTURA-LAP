@@ -111,14 +111,16 @@ function show(screenId) {
 }
 
 function updateCountryUI(country) {
-  state.country = country;
+  const sel = $('#country');
+  const actual = country || (sel ? sel.value : state.country) || 'BR';
+  state.country = actual;
   const flagEl = $('#country-flag-icon');
-  if (flagEl && flags[country]) {
-    flagEl.innerHTML = flags[country];
+  if (flagEl && flags[actual]) {
+    flagEl.innerHTML = flags[actual];
   }
   const phoneInput = $('#phone');
   if (phoneInput) {
-    phoneInput.placeholder = country === 'BR' ? '(00) 00000-0000' : '0981 000 000';
+    phoneInput.placeholder = actual === 'BR' ? '(00) 00000-0000' : '0981 000 000';
   }
 }
 
@@ -428,6 +430,7 @@ if (countrySelect) {
   };
   countrySelect.addEventListener('change', onCountryChange);
   countrySelect.addEventListener('input', onCountryChange);
+  window.addEventListener('pageshow', () => updateCountryUI());
 }
 
 // Language buttons

@@ -27,11 +27,26 @@ export function createAdminService({ repository, config } = {}) {
         page,
         pageSize,
         search: typeof params.search === 'string' ? params.search.trim() : '',
+        company: typeof params.company === 'string' ? params.company.trim() : '',
         country: params.country === 'BR' || params.country === 'PY' ? params.country : '',
         from: params.from || '',
         to: params.to || ''
       };
       return repo.list(filters);
+    },
+
+    async getOverview(params = {}) {
+      const filters = {
+        company: typeof params.company === 'string' ? params.company.trim() : '',
+        country: params.country === 'BR' || params.country === 'PY' ? params.country : '',
+        from: params.from || '',
+        to: params.to || ''
+      };
+      return repo.getOverview(filters);
+    },
+
+    async listCompanies() {
+      return repo.listCompanies();
     },
 
     async getAssessment(id) {
@@ -48,7 +63,10 @@ export function createAdminService({ repository, config } = {}) {
 
     async exportCsv(params = {}) {
       const filters = {
-        country: params.country === 'BR' || params.country === 'PY' ? params.country : ''
+        company: typeof params.company === 'string' ? params.company.trim() : '',
+        country: params.country === 'BR' || params.country === 'PY' ? params.country : '',
+        from: params.from || '',
+        to: params.to || ''
       };
       const rows = await repo.exportRows(filters);
 

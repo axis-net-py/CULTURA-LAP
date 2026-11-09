@@ -35,14 +35,16 @@
     <section id="dashboard" hidden>
       <div class="admin-title-row">
         <div>
-          <p class="eyebrow">PAINEL EMPRESARIAL</p>
+          <p class="eyebrow">PAINEL EXECUTIVO</p>
           <h1>Diagnósticos Culturais</h1>
         </div>
         <a id="export" class="secondary" href="/api/admin/export">Exportar CSV</a>
       </div>
 
       <form id="filters" class="filter-bar">
-        <input name="search" placeholder="Buscar por nome, empresa ou WhatsApp">
+        <input name="search" placeholder="Buscar por participante ou telefone">
+        <input name="company" id="company-filter" list="company-list" placeholder="Filtrar por empresa (ex: DALET)">
+        <datalist id="company-list"></datalist>
         <select name="country">
           <option value="">Todos os países</option>
           <option value="BR">Brasil (+55)</option>
@@ -52,6 +54,57 @@
         <input name="to" type="date" aria-label="Data final">
         <button class="primary compact" type="submit">Filtrar</button>
       </form>
+
+      <div id="company-quick-filters" class="company-quick-filters" hidden></div>
+
+      <!-- EXECUTIVE OVERVIEW CARD (COMPANY OR GLOBAL PANORAMA) -->
+      <section id="company-overview-card" class="company-overview-card" hidden>
+        <div class="overview-header">
+          <div class="overview-title-group">
+            <span class="overview-eyebrow">PANORAMA CULTURAL COLETIVO</span>
+            <h2 id="overview-company-title">Todas as Empresas</h2>
+            <p id="overview-meta" class="overview-meta">0 colaboradores avaliados</p>
+          </div>
+          <div class="overview-badge-wrap">
+            <span id="overview-maturity-badge" class="maturity-badge">Maturidade</span>
+          </div>
+        </div>
+
+        <div class="overview-main-grid">
+          <div class="overview-kpi-card">
+            <span class="kpi-sub">Índice Médio Consolidado</span>
+            <div class="kpi-number-wrap">
+              <strong id="overview-avg-index">0.00</strong>
+              <small>/ 5.0</small>
+            </div>
+            <p id="overview-avg-score" class="kpi-score-sub">0.0 / 100 pontos</p>
+            <p id="overview-maturity-desc" class="overview-maturity-desc"></p>
+          </div>
+
+          <div class="overview-dims-card">
+            <span class="dims-title">ADERÊNCIA POR DIMENSÃO LAP</span>
+            <div id="overview-dims-list" class="overview-dims-list"></div>
+          </div>
+        </div>
+
+        <div class="overview-insights-row">
+          <div class="insights-box strengths">
+            <div class="insights-title">
+              <span class="dot green"></span>
+              <h4>Fortalezas Coletivas (Maiores Médias)</h4>
+            </div>
+            <ul id="overview-strengths-list" class="insights-list"></ul>
+          </div>
+
+          <div class="insights-box gaps">
+            <div class="insights-title">
+              <span class="dot red"></span>
+              <h4>Gargalos Prioritários (Atenção e Intervenção)</h4>
+            </div>
+            <ul id="overview-gaps-list" class="insights-list"></ul>
+          </div>
+        </div>
+      </section>
 
       <p id="summary" class="admin-summary"></p>
 
@@ -85,4 +138,3 @@
   <script type="module" src="/public/admin.js"></script>
 </body>
 </html>
-

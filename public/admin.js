@@ -50,9 +50,112 @@ function badgeClass(band) {
   return 'badge-risk';
 }
 
+function renderOverview(overview, companies) {
+  const card = $('#company-overview-card');
+  if (!card) return;
+
+  // Datalist and quick pills
+  const datalist = $('#company-list');
+  if (datalist && Array.isArray(companies)) {
+    datalist.innerHTML = companies.map((c) => `<option value="${escapeHtml(c)}"></option>`).join('');
+  }
+
+  const pillsWrap = $('#company-quick-filters');
+  if (pillsWrap && Array.isArray(companies)) {
+    const currentCompany = ($('#company-filter')?.value || '').trim();
+    const allCompanies = ['Todas', ...companies];
+    pillsWrap.innerHTML = allCompanies.map((c) => {
+      const isAll = c === 'Todas';
+      const isActive = isAll ? !currentCompany : currentCompany.toLowerCase() === c.toLowerCase();
+      return `<button type="button" class="company-pill ${isActive ? 'active' : ''}" data-company="${isAll ? '' : escapeHtml(c)}">${escapeHtml(c)}</button>`;
+    }).join('');
+    pillsWrap.hidden = companies.length === 0;
+
+    pillsWrap.querySelectorAll('.company-pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const comp = btn.dataset.company || '';
+        const compInput = $('#company-filter');
+        if (compInput) compInput.value = comp;
+        page = 1;
+        loadResults();
+      });
+    });
+  }
+
+  if (!overview || overview.count === 0) {
+    card.hidden = true;
+    return;
+  }
+
+  card.hidden = false;
+  const compTitle = overview.company || 'Todas as Empresas';
+  $('#overview-company-title').textContent = compTitle;
+  $('#overview-meta').textContent = `${overview.count} colaborador${overview.count === 1 ? '' : 'es'} avaliado${overview.count === 1 ? '' : 's'} · Diagnóstico Consolidado`;
+
+  const m = overview.maturity || {};
+  const badge = $('#overview-maturity-badge');
+  if (badge) {
+    badge.textContent = m.name || 'Diagnóstico Concluído';
+    badge.className = `maturity-badge ${badgeClass(m.band)}`;
+    if (m.color) {
+      badge.style.color = '#ffffff';
+      badge.style.backgroundColor = m.color;
+    }
+  }
+
+  $('#overview-avg-index').textContent = Number(overview.avgCulturalIndex).toFixed(2);
+  $('#overview-avg-score').textContent = `Média: ${overview.avgTotalScore.toFixed(1)} / 100 pontos`;
+  $('#overview-maturity-desc').textContent = m.description || '';
+
+  // Dimensions
+  const dimsList = $('#overview-dims-list');
+  if (dimsList && Array.isArray(overview.dimensions)) {
+    dimsList.innerHTML = overview.dimensions.map((d) => `
+      <div class="dim-item-row">
+        <span class="dim-item-title">${escapeHtml(d.title)}</span>
+        <span class="dim-item-val">${d.average.toFixed(2)} / 5.0 (${d.percentage}%)</span>
+        <div class="dim-item-bar-bg">
+          <div class="dim-item-bar-fill" style="width: ${d.percentage}%;"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Strengths
+  const strList = $('#overview-strengths-list');
+  if (strList && Array.isArray(overview.strengths)) {
+    strList.innerHTML = overview.strengths.length
+      ? overview.strengths.map((s) => `
+          <li class="insight-item">
+            <span class="insight-text"><strong>Q${s.id}.</strong> ${escapeHtml(s.text)}</span>
+            <span class="insight-score-pill">Média ${s.average.toFixed(2)} (${s.percentage}%)</span>
+          </li>
+        `).join('')
+      : '<li class="insight-item">Dados insuficientes.</li>';
+  }
+
+  // Gaps
+  const gapsList = $('#overview-gaps-list');
+  if (gapsList && Array.isArray(overview.gaps)) {
+    gapsList.innerHTML = overview.gaps.length
+      ? overview.gaps.map((g) => `
+          <li class="insight-item">
+            <span class="insight-text"><strong>Q${g.id}.</strong> ${escapeHtml(g.text)}</span>
+            <span class="insight-score-pill">Média ${g.average.toFixed(2)} (${g.percentage}%)</span>
+          </li>
+        `).join('')
+      : '<li class="insight-item">Nenhum gargalo expressivo detectado.</li>';
+  }
+}
+
 async function loadResults() {
   try {
-    const data = await api(`/api/admin/assessments?${query()}`);
+    const qStr = query().toString();
+    const [data, overviewData] = await Promise.all([
+      api(`/api/admin/assessments?${qStr}`),
+      api(`/api/admin/overview?${qStr}`).catch(() => ({ overview: null, companies: [] }))
+    ]);
+
     $('#summary').textContent = `${data.total} diagnóstico${data.total === 1 ? '' : 's'} encontrado${data.total === 1 ? '' : 's'}`;
     $('#results').innerHTML = data.items.map((item) => {
       const bClass = badgeClass(item.maturity?.band);
@@ -72,7 +175,9 @@ async function loadResults() {
         </tr>
       `;
     }).join('') || '<tr><td colspan="8">Nenhum diagnóstico encontrado.</td></tr>';
+
     renderPages(data.total, data.pageSize);
+    renderOverview(overviewData.overview, overviewData.companies);
     bindActions();
   } catch (error) {
     if (error.status === 401) return showLogin();
@@ -205,4 +310,3 @@ $('#close-detail').addEventListener('click', () => $('#detail').close());
 
 // Initial session check
 api('/api/admin/session').then(showDashboard).catch(showLogin);
-
