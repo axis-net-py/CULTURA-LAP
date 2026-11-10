@@ -123,6 +123,7 @@ function updateCountryUI(country) {
     phoneInput.placeholder = actual === 'BR' ? '(00) 00000-0000' : '0981 000 000';
   }
 }
+window.updateCountryFlag = updateCountryUI;
 
 function setLanguage(locale) {
   state.locale = locale;

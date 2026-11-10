@@ -62,7 +62,7 @@
             <span id="country-flag-icon" class="country-flag-icon" aria-hidden="true">
               <svg viewBox="0 0 32 24" class="flag-svg"><rect width="32" height="24" rx="2" fill="#009739"/><polygon points="16,3.5 29,12 16,20.5 3,12" fill="#fed100"/><circle cx="16" cy="12" r="5" fill="#002776"/><path d="M11.5 13.2 C13.5 11.2 18.5 11.2 20.5 13.2" stroke="#ffffff" stroke-width="1.1" fill="none"/></svg>
             </span>
-            <select id="country" name="country" aria-label="País">
+            <select id="country" name="country" aria-label="País" onchange="window.updateCountryFlag&&window.updateCountryFlag(this.value)">
               <option value="BR">Brasil (+55)</option>
               <option value="PY">Paraguay (+595)</option>
             </select>
